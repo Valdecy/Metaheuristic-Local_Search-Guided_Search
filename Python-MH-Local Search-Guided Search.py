@@ -37,33 +37,32 @@ def stochastic_2_opt(Xdata, city_tour):
 
 #Function: Augmented Cost
 def augumented_cost(Xdata, city_tour, penalty, limit):
-    distance = 0
     augmented = 0   
     for i in range(0, len(city_tour[0]) - 1):
         c1 = city_tour[0][i]
         c2 = city_tour[0][i + 1]      
         if c2 < c1:
             c1, c2 = c2, c1            
-        distance  = distance  + Xdata.iloc[c1-1, c2-1]
         augmented = augmented + Xdata.iloc[c1-1, c2-1] + (limit * penalty[c1-1][c2-1])    
-    return [distance, augmented]
+    return augmented
 
 # Function: Local Search
 def local_search(Xdata, city_tour, penalty, max_attempts = 50, limit= 1):
     count = 0
-    _, ag_cost = augumented_cost(Xdata, city_tour = city_tour, penalty = penalty, limit = limit)
+    ag_cost = augumented_cost(Xdata, city_tour = city_tour, penalty = penalty, limit = limit)
     solution = copy.deepcopy(city_tour) 
     while (count < max_attempts):
         candidate = stochastic_2_opt(Xdata, city_tour = solution)
-        _, candidate_augmented = augumented_cost(Xdata, city_tour = candidate, penalty = penalty, limit = limit)       
+        candidate_augmented = augumented_cost(Xdata, city_tour = candidate, penalty = penalty, limit = limit)       
         if candidate_augmented < ag_cost:
             solution  = copy.deepcopy(candidate)
-            _, ag_cost = augumented_cost(Xdata, city_tour = solution, penalty = penalty, limit = limit)
+            ag_cost = augumented_cost(Xdata, city_tour = solution, penalty = penalty, limit = limit)
             count = 0
         else:
             count = count + 1                             
     return solution 
 
+#Function: Utility
 def utility (Xdata, city_tour, penalty, limit = 1):
     utilities = [0 for i in city_tour[0]]
     for i in range(0, len(city_tour[0]) - 1):
@@ -74,6 +73,7 @@ def utility (Xdata, city_tour, penalty, limit = 1):
         utilities[i] = Xdata.iloc[c1-1, c2-1] /(1 + penalty[c1-1][c2-1])  
     return utilities
 
+#Function: Update Penalty
 def update_penalty(penalty, city_tour, utilities):
     max_utility = max(utilities)   
     for i in range(0, len(city_tour[0]) - 1):
@@ -101,7 +101,7 @@ def guided_search(Xdata, city_tour, alpha = 0.3, local_search_optima = 12000, ma
         count = count + 1
         if (count > 0):
             print("Iteration = ", count, "->", best_solution)
-    return best_solution, penalty
+    return best_solution
 
 ######################## Part 1 - Usage ####################################
 
