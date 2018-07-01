@@ -99,8 +99,7 @@ def guided_search(Xdata, city_tour, alpha = 0.3, local_search_optima = 12000, ma
         if (solution[1] < best_solution[1]):
             best_solution = copy.deepcopy(solution) 
         count = count + 1
-        if (count > 0):
-            print("Iteration = ", count, "->", best_solution)
+        print("Iteration = ", count, "->", best_solution)
     return best_solution
 
 ######################## Part 1 - Usage ####################################
